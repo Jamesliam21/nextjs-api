@@ -1,36 +1,33 @@
-
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 import * as yup from "yup";
-
 
 //Validation  schema 
 const schema = yup.object().shape({
     name: yup.string().required("Name is required"),
     age: yup.number().positive().required("Age is required."),
     gender: yup.string().required("Gender is required."),
-    father_name: yup.string().required("Father name is required."),
     address: yup.string().required("Address is required."),
     major: yup.string().required("Major is required.")
 
 });
 
-//Update student API
+// params = id
 export async function PUT(req, { params }) {
     try {
-        const studentId = params.id;
-        const body = await req.json();
-        await schema.validate(body, { abortEarly: false });
-        return NextResponse.json({
-            message: "Student is successfully updated.",
-            studentId,
-            bodyData: body
-        });
-    } catch (error) {
+    const bookID = params.id; //get URI params field;
+    const body = await req.json();
+    await schema.validate(body, { abortEarly: false });
+    return NextResponse.json({
+        message: 'Book is successfully updated.',
+        bookID,
+        bodyData: body,
+    });
+} catch (error) {
         if (error.name === "ValidationError") {
             return NextResponse.json(
                 {
                     message: "Validation Failed",
-                    errors: error.inner.map((e) => ({       //we used map for the output that we want 
+                    errors: error.inner.map((e) => ({  //we used map for the output that we want 
                         path: e.path,
                         message: e.message,
                     })),
@@ -44,30 +41,30 @@ export async function PUT(req, { params }) {
             status: 500
         });
     }
-
 }
 
 export async function DELETE(req, { params }) {
-    const studentId = params.id;
+    const bookID = params.id; //get URI params field;
     return NextResponse.json({
-        message: "Student is successfullu deleted!",
-        studentId,
+        message: 'Book is successfully deleted.',
+        bookID,
     });
-
 }
-
-//Get student Detail API
+//details
 export async function GET(req, { params }) {
-    const studentId = params.id;
-    const student = {
-        id: studentId,
-        name: 'Su Su',
-        age: 17,
-        gender: "female",
-        father_name: "U Mya",
-        address: 'Hlaing',
-        major: 'Computer Science',
-    }
-    return NextResponse.json(student)
+    const bookID = params.id; //get URI params field;
+    const book = {
+        id: bookID,
+        name: "Su Su",
+        age: 18,
+        fatherName: "U Maung",
+        address: "Hledan",
+        major: "Computer Science",
+        book: "React-js"
 
+    };
+    return NextResponse.json({
+        message: 'Book detail is successfully get',
+        book,
+    });
 }
