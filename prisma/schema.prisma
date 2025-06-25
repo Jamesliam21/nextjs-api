@@ -1,0 +1,37 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum Gender {
+    male
+    female
+}
+
+model Student {
+    id          Int      @id @default(autoincrement())
+    name        String   @db.VarChar(255)
+    father_name String   @db.VarChar(255)
+    gender      Gender
+    age         Int
+    dob         DateTime @db.Date //stores only 'YYYY-MM-DD' in MYSQL
+    phone       String?  @db.VarChar(255) //? က nullလက်ခံတာ
+    address     String   @db.VarChar(255)
+    major       String?  @db.VarChar(255)
+    class_id    Int?
+
+    @@map("students")
+}
+
+model Book {
+    id             Int     @id @default(autoincrement())
+    title          String? @db.VarChar(255)
+    author         String? @db.VarChar(255)
+    published_year Int?
+
+    @@map("books")
+}

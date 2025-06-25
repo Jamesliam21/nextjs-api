@@ -1,3 +1,6 @@
+import{AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter";
+import StyledRoot from "./StyledRoot";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -20,7 +23,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+         <AppRouterCacheProvider>
+          <StyledRoot>{children}</StyledRoot>
+          </AppRouterCacheProvider>
+
       </body>
     </html>
   );

@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import * as yup from "yup";
+import { prisma } from "@/lib/prisma"; //pisma ချိတ်
 
 
 const schema = yup.object().shape({
     name: yup.string().required("Name is required"),
-    age: yup.number().positive().required("Age is required."),
-    gender: yup.string().required("Gender is required."),
     father_name: yup.string().required("Father name is required."),
+    gender: yup.string().required().oneOf(["male", "female"], "Invalid gender"),
+    age: yup.number().required("Age is required."),
+    dob: yup.date().nullable().required("Birthday is required."),
+    phone: yup.string().required("Phone number is required"),
     address: yup.string().required("Address is required."),
-     name: yup.string().required("Name is required"),
+    major: yup.string().required("Major is required.")
 
 });
 
@@ -34,10 +37,18 @@ const StudentData = [
     },
 ]
 
+// get student list api
 export async function GET() {
-    return NextResponse.json({ StudentData }
-    );
+    const students = await prisma.student.findMany();
+    return NextResponse.json(students);
 }
+
+// export async function GET() {
+//     return NextResponse.json({ StudentData }
+//     );
+// }
+
+
 // export async function POST(req) {
 //     const body = await req.json();
 //     // console.log(body)
@@ -45,13 +56,19 @@ export async function GET() {
 //     );
 // }
 
+//create
 export async function POST(req) {
     try {
         const body = await req.json();
-        await schema.validate(body, { abortEarly: false });  //we used await cause the schema is the async function //use abortEarly for testing validate that is true or false
+        const validatedData = await schema.validate(body, { abortEarly: false });  //we used await cause the schema is the async function //use abortEarly for testing validate that is true or false
+
+        const student = await prisma.student.create({
+            data: validatedData,
+        });
+
         return NextResponse.json({
             message: "Student is successfully created.",
-            bodyData: body
+            student: student,
         })
     } catch (error) {
         // return NextResponse.json({ message: "Internal Server Error" }, { status: 500 }); //we need to mark that error message have the (status) attrubute
